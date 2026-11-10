@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doce Pedido | Gestão de Cupcakes</title>
+  <style>
+    :root{--ink:#2e2230;--muted:#756b75;--pink:#d54b79;--light:#fff6f8;--border:#f0e0e6;--green:#277c58}
+    *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#fbf9fa;color:var(--ink)}
+    header{background:#fff;border-bottom:1px solid var(--border);padding:20px max(20px,calc((100% - 1080px)/2));display:flex;justify-content:space-between;align-items:center;gap:12px}
+    header strong{font-size:25px;color:#ad2859}header span{color:var(--muted);font-size:13px}
+    main{max-width:1120px;margin:36px auto;padding:0 20px 40px}
+    h1{margin:0;font-size:30px}h2{font-size:19px;margin:0 0 16px}p{color:var(--muted);line-height:1.5}
+    .intro{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;gap:12px}
+    .tag{background:#fce5ed;border-radius:99px;padding:9px 13px;font-size:12px;color:#9a2950;font-weight:bold}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+    .stat,.panel{background:white;border:1px solid var(--border);border-radius:15px;box-shadow:0 4px 20px #5e345208}
+    .stat{padding:21px}.stat label{font-size:13px;color:var(--muted);display:block}.stat strong{font-size:29px;display:block;margin-top:8px}
+    .layout{display:grid;grid-template-columns:340px 1fr;align-items:start;gap:20px}.panel{padding:23px}
+    .hint{font-size:13px;margin-top:-7px;margin-bottom:17px}
+    .field{display:block;font-size:13px;font-weight:bold;margin:16px 0 7px}
+    input,select,button{font:inherit;border-radius:9px}input,select{width:100%;padding:12px;border:1px solid #d9ccd2;background:white;color:var(--ink)}
+    input:focus,select:focus{outline:2px solid #f6a5c0;border-color:var(--pink)}
+    button{border:0;cursor:pointer;font-weight:bold}.primary{width:100%;background:var(--pink);color:white;padding:14px;margin-top:18px}.primary:hover{background:#bc3968}
+    .price{margin-top:16px;padding:12px;background:var(--light);border-radius:9px;display:flex;justify-content:space-between}
+    .message{min-height:20px;font-size:13px;margin:10px 0 0}.ok{color:var(--green)}.error{color:#b2203e}
+    .order{border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:12px;display:flex;gap:12px;justify-content:space-between;align-items:center}
+    .order strong{display:block}.sub{color:var(--muted);font-size:13px;margin-top:5px}.order-right{text-align:right;min-width:130px}
+    .order-right select{font-size:12px;padding:8px;margin-top:7px;border-radius:7px}
+    .money{font-weight:bold;color:#a52c59}.empty{padding:25px;border:1px dashed var(--border);text-align:center;border-radius:12px}
+    footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+    @media(max-width:780px){header{padding:17px 20px}.layout{grid-template-columns:1fr}.intro{align-items:start;flex-direction:column}h1{font-size:26px}}
+    @media(max-width:520px){.stats{grid-template-columns:1fr}.order{flex-direction:column;align-items:stretch}.order-right{text-align:left}header span{display:none}}
+  </style>
+</head>
+<body>
+  <header><strong>🧁 Doce Pedido</strong><span>Projeto acadêmico • PIT II</span></header>
+  <main>
+    <div class="intro"><div><h1>Painel de pedidos</h1><p>Uma forma simples de organizar os pedidos de cupcakes.</p></div><div class="tag">Sistema demonstrativo</div></div>
+    <section class="stats" aria-label="Indicadores">
+      <div class="stat"><label>Total de pedidos</label><strong id="total-pedidos">0</strong></div>
+      <div class="stat"><label>Em andamento</label><strong id="em-andamento">0</strong></div>
+      <div class="stat"><label>Total entregue</label><strong id="total-entregue">R$ 0,00</strong></div>
+    </section>
+    <div class="layout">
+      <section class="panel">
+        <h2>Adicionar pedido</h2><p class="hint">Preencha os três campos e salve.</p>
+        <form id="form-pedido">
+          <label class="field" for="cliente">Nome do cliente</label>
+          <input id="cliente" name="cliente" placeholder="Ex.: Cliente teste" minlength="2" maxlength="80" required>
+          <label class="field" for="sabor">Sabor</label>
+          <select id="sabor" name="sabor"><option>Chocolate</option><option>Baunilha</option><option>Morango</option></select>
+          <label class="field" for="quantidade">Quantidade</label>
+          <input id="quantidade" name="quantidade" type="number" min="1" max="30" value="1" required>
+          <div class="price"><span>Valor do pedido</span><strong id="preco-previa">R$ 8,50</strong></div>
+          <button class="primary" type="submit">Salvar pedido</button>
+          <p id="mensagem" class="message" role="status"></p>
+        </form>
+      </section>
+      <section class="panel"><h2>Pedidos cadastrados</h2><p class="hint">Altere o status para acompanhar o atendimento.</p><div id="lista" aria-live="polite"><div class="empty">Carregando...</div></div></section>
+    </div>
+  </main>
+  <footer>Dados fictícios para demonstração acadêmica · Sem pagamentos reais</footer>
+  <script>
+    const precos = {Chocolate:850,Baunilha:750,Morango:900};
+    const estados = ['Recebido','Em preparo','Pronto','Entregue','Cancelado'];
+    const moeda = centavos => (centavos/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    const $ = id => document.getElementById(id);
+    function previa(){ $('preco-previa').textContent=moeda((precos[$('sabor').value]||0)*Math.max(0,Number($('quantidade').value)||0)); }
+    $('sabor').addEventListener('change',previa);
+    $('quantidade').addEventListener('input',previa);
+    async function api(rota, opcoes={}) {
+      const resposta=await fetch(rota,{...opcoes,headers:{'Content-Type':'application/json',...(opcoes.headers||{})}});
+      const dados=await resposta.json();
+      if(!resposta.ok)throw new Error(dados.erro||'Não foi possível completar a ação.');
+      return dados;
+    }
+    function elemento(tag, classe, conteudo){ const e=document.createElement(tag);if(classe)e.className=classe;if(conteudo!==undefined)e.textContent=conteudo;return e; }
+    async function carregar(){
+      try {
+        const pedidos=await api('/api/pedidos');
+        $('total-pedidos').textContent=pedidos.length;
+        $('em-andamento').textContent=pedidos.filter(p=>!['Entregue','Cancelado'].includes(p.status)).length;
+        $('total-entregue').textContent=moeda(pedidos.filter(p=>p.status==='Entregue').reduce((total,p)=>total+p.total_centavos,0));
+        $('lista').replaceChildren();
+        if(!pedidos.length){$('lista').append(elemento('div','empty','Nenhum pedido ainda. Cadastre o primeiro ao lado!'));return;}
+        for(const p of pedidos){
+          const card=elemento('article','order');const info=elemento('div');
+          info.append(elemento('strong','',`#${p.id} · ${p.cliente}`),elemento('div','sub',`${p.quantidade} × ${p.sabor} · ${p.criado_em}`));
+          const direita=elemento('div','order-right');direita.append(elemento('div','money',moeda(p.total_centavos)));
+          const select=elemento('select');select.setAttribute('aria-label',`Status do pedido ${p.id}`);
+          for(const estado of estados){const opt=elemento('option','',estado);opt.value=estado;select.append(opt);}
+          select.value=p.status;select.disabled=['Entregue','Cancelado'].includes(p.status);
+          select.addEventListener('change',async()=>{
+            try{await api(`/api/pedidos/${p.id}`,{method:'PATCH',body:JSON.stringify({status:select.value})});await carregar();}
+            catch(erro){alert(erro.message);await carregar();}
+          });
+          direita.append(select);card.append(info,direita);$('lista').append(card);
+        }
+      }catch(erro){$('lista').replaceChildren(elemento('div','empty',erro.message));}
+    }
+    $('form-pedido').addEventListener('submit',async evento=>{
+      evento.preventDefault();$('mensagem').textContent='Salvando...';$('mensagem').className='message';
+      try{
+        await api('/api/pedidos',{method:'POST',body:JSON.stringify({cliente:$('cliente').value.trim(),sabor:$('sabor').value,quantidade:Number($('quantidade').value)})});
+        $('mensagem').textContent='Pedido cadastrado com sucesso!';$('mensagem').className='message ok';
+        $('form-pedido').reset();previa();await carregar();
+      }catch(erro){$('mensagem').textContent=erro.message;$('mensagem').className='message error';}
+    });
+    carregar();
+  </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+PIT II — DOCE PEDIDO | SISTEMA SIMPLES DE PEDIDOS DE CUPCAKES
+================================================================
+
+O QUE É
+Sistema web didático que dá continuidade ao planejamento UML de um aplicativo de
+cupcakes (PIT I). Escopo implementado: cadastro de pedidos, cálculo automático do
+valor, consulta dos pedidos e acompanhamento do status. Não há login,
+pagamento real ou serviço de entregas nesta versão demonstrativa.
+
+ARQUIVOS PARA O GITHUB
+- app.py       -> back-end em Python; banco SQLite criado automaticamente
+- index.html   -> front-end em HTML, CSS e JavaScript
+- LEIA-ME.txt  -> instruções
+- ROTEIROS.txt -> falas sugeridas para os vídeos
+- PREENCHIMENTO-PIT-II.txt -> conteúdo para copiar ao modelo da faculdade
+
+COMO EXECUTAR NO WINDOWS
+1. Instale Python 3 (https://www.python.org/downloads/) e marque "Add Python to PATH".
+2. Extraia o ZIP em uma pasta comum.
+3. Abra essa pasta no Explorador, clique na barra do caminho, digite cmd e pressione Enter.
+4. Digite: py app.py
+   (Se não funcionar, use: python app.py)
+5. Abra no navegador: http://localhost:8000
+6. Para encerrar, volte ao terminal e pressione Ctrl + C.
+
+COMO TESTAR
+1. Crie um pedido para "Cliente teste" com 2 cupcakes de Chocolate.
+2. Confira que o valor é R$ 17,00.
+3. Confira o pedido na lista e altere o status para Em preparo > Pronto > Entregue.
+4. Confira que o total entregue passou para R$ 17,00.
+5. Tente cadastrar quantidade 0. O sistema deve impedir.
+6. Feche o programa, execute novamente e veja que o pedido continua salvo.
+
+COMO SUBIR O CÓDIGO NO GITHUB
+1. Acesse github.com, entre na sua conta e clique em New repository.
+2. Nome sugerido: pit2-cupcakes.
+3. Selecione Public, crie o repositório.
+4. Clique em Add file > Upload files e selecione os arquivos .py, .html e .txt
+   (NÃO envie pedidos.db, que contém dados locais).
+5. Clique em Commit changes. Copie o endereço real do repositório para o trabalho.
+
+COMO PUBLICAR ONLINE (EXEMPLO: RENDER)
+1. Depois de publicar o código, acesse render.com e crie um Web Service
+   ligado ao seu repositório do GitHub.
+2. Escolha ambiente Python, sem comando de build específico.
+3. Configure Start Command: python app.py
+4. O servidor usa automaticamente a variável PORT atribuída pela hospedagem.
+5. Aguarde a publicação e teste o endereço gerado pela própria plataforma.
+6. Copie o LINK REAL no modelo da faculdade, não crie um endereço fictício.
+
+AVISO: Em hospedagens com disco efêmero, como alguns planos da Render,
+o SQLite local pode perder dados ao reiniciar ou implantar nova versão.
+Para a apresentação acadêmica utilize dados fictícios e refaça os pedidos de teste
+quando necessário. Não use esta versão sem login para armazenar dados reais.
+
+PREENCHIMENTO DA TABELA DA FACULDADE
+Back-end: Python 3 (biblioteca padrão HTTP)
+Banco de dados: SQLite
+Hospedagem: Render (somente depois de publicar) ou local durante desenvolvimento
+Plataforma: Aplicação web responsiva
+Modo de codificação: Tradicional
+Front-end: HTML5, CSS3 e JavaScript
+
+NOTA ACADÊMICA
+O tema da PIT I era um aplicativo de cupcakes modelado em UML. Esta versão
+implementa um recorte funcional dos casos de uso para demonstrar a passagem
+do planejamento para um sistema executável. Pagamento e entregas externas
+permanecem como melhorias futuras. Colete feedback real de 5 colegas:
+este pacote não inventa nomes, testes nem evidências de terceiros.
