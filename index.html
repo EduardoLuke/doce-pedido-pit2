@@ -18,6 +18,10 @@
     .stat{padding:21px}.stat label{font-size:13px;color:var(--muted);display:block}.stat strong{font-size:29px;display:block;margin-top:8px}
     .layout{display:grid;grid-template-columns:340px 1fr;align-items:start;gap:20px}.panel{padding:23px}
     .hint{font-size:13px;margin-top:-7px;margin-bottom:17px}
+    .help{background:#fff0f5;border:1px solid #f1cad8;border-radius:12px;padding:16px 19px;margin:0 0 23px}
+    .help strong{display:block;color:#92274e;margin-bottom:7px}
+    .help p{margin:0;font-size:14px;color:#52434b}
+    .select-label{font-size:12px;margin-top:8px;color:#6c5863;font-weight:bold}
     .field{display:block;font-size:13px;font-weight:bold;margin:16px 0 7px}
     input,select,button{font:inherit;border-radius:9px}input,select{width:100%;padding:12px;border:1px solid #d9ccd2;background:white;color:var(--ink)}
     input:focus,select:focus{outline:2px solid #f6a5c0;border-color:var(--pink)}
@@ -37,6 +41,10 @@
   <header><strong>🧁 Doce Pedido</strong><span>Projeto acadêmico • PIT II</span></header>
   <main>
     <div class="intro"><div><h1>Painel de pedidos</h1><p>Uma forma simples de organizar os pedidos de cupcakes.</p></div><div class="tag">Sistema demonstrativo</div></div>
+    <aside class="help" aria-label="Como funciona o acompanhamento">
+      <strong>Como usar o Doce Pedido? (3 passos)</strong>
+      <p>1. Cadastre um pedido à esquerda. &nbsp; 2. Na lista, use <b>"Situação do pedido"</b> para indicar se foi recebido, está em preparo ou ficou pronto. &nbsp; 3. Escolha <b>"Entregue"</b> quando o cliente receber. Para pedidos que não serão feitos, escolha <b>"Cancelado"</b>. Pedidos finalizados não podem ser alterados.</p>
+    </aside>
     <section class="stats" aria-label="Indicadores">
       <div class="stat"><label>Total de pedidos</label><strong id="total-pedidos">0</strong></div>
       <div class="stat"><label>Em andamento</label><strong id="em-andamento">0</strong></div>
@@ -57,10 +65,10 @@
           <p id="mensagem" class="message" role="status"></p>
         </form>
       </section>
-      <section class="panel"><h2>Pedidos cadastrados</h2><p class="hint">Altere o status para acompanhar o atendimento.</p><div id="lista" aria-live="polite"><div class="empty">Carregando...</div></div></section>
+      <section class="panel"><h2>Pedidos cadastrados</h2><p class="hint">Após cadastrar, mude a <b>Situação do pedido</b> para acompanhar cada etapa. O campo fica bloqueado depois de Entregue ou Cancelado.</p><div id="lista" aria-live="polite"><div class="empty">Carregando...</div></div></section>
     </div>
   </main>
-  <footer>Dados fictícios para demonstração acadêmica · Sem pagamentos reais</footer>
+  <footer>Dados fictícios para demonstração acadêmica · Sem pagamentos reais<br>Na hospedagem gratuita de demonstração, os pedidos podem desaparecer após uma pausa ou reinício do servidor.</footer>
   <script>
     const precos = {Chocolate:850,Baunilha:750,Morango:900};
     const estados = ['Recebido','Em preparo','Pronto','Entregue','Cancelado'];
@@ -95,7 +103,7 @@
             try{await api(`/api/pedidos/${p.id}`,{method:'PATCH',body:JSON.stringify({status:select.value})});await carregar();}
             catch(erro){alert(erro.message);await carregar();}
           });
-          direita.append(select);card.append(info,direita);$('lista').append(card);
+          direita.append(elemento('div','select-label','Situação do pedido'),select);card.append(info,direita);$('lista').append(card);
         }
       }catch(erro){$('lista').replaceChildren(elemento('div','empty',erro.message));}
     }
